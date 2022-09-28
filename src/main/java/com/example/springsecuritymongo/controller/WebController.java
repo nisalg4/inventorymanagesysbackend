@@ -94,5 +94,15 @@ public class WebController {
         return new ResponseEntity<>(inventory1, HttpStatus.CREATED);
     }
 
+    @GetMapping("/Inventory/delete/{ID}")
+    public ResponseEntity<Inventory> deleteInventorybyEmployee(@PathVariable String ID) {
+        Inventory inventory = inventoryService.deleteInventory(ID);
+        return new ResponseEntity<>(inventory, HttpStatus.OK);
+    }
+    @PostMapping("/updateInventory")
+    public ResponseEntity<Inventory> updateInventory(@RequestBody Inventory inventory) {
+        Inventory inventory1 = inventoryService.addAssettoEmployeeinterface(inventory.getEmployee().getId(),inventory.getAssets().get(0).getName());
+        return new ResponseEntity<>(inventory1, HttpStatus.CREATED);
+    }
 
 }

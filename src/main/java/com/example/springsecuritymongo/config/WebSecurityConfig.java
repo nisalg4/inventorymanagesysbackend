@@ -57,6 +57,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/addInventory").hasAnyAuthority("admin")
                 .antMatchers("/Inventory/employeeName/{ID}").hasAnyAuthority("admin")
                 .antMatchers("/Inventory/asset/{ID}").hasAnyAuthority("admin")
+                .antMatchers("/Inventory/delete/{ID}").hasAnyAuthority("admin")
+                .antMatchers("/updateInventory").hasAnyAuthority("admin")
                 .anyRequest().authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }

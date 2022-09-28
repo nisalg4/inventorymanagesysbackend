@@ -75,8 +75,34 @@ public class InventoryService {
         }catch(NullPointerException e ){
             return inventoryRepository.save(inventory);
         }
-
     }
 
+    public Inventory deleteInventory(String employee) {
+        return inventoryRepository.deleteInventoryByEmployee_Username(employee);
+    }
 
+    public Inventory addAssettoEmployeeinterface(String employeeid,String assetName) {
+      return addAssettoEmployee(employeeService.getEmployeeById(employeeid),assetService.getAssetByName(assetName));
+    }
+
+    public Inventory addAssettoEmployee(Employee employee,Asset asset) {
+
+      Inventory inventory=this.findInventoryByEmployee(employee.getUsername());
+      if(inventory.getEmployee().getId()==null){
+          addInventory(new Inventory((List) asset,employee));
+      }else {
+          if(assetService.getAssetById(asset.getAssetId()).getAssetId().equals(asset.getAssetId())){
+              if(this.findInventorybyAsset(asset.getName()).getEmployee()==null) {
+                  inventory.addAsset(asset);
+                  deleteInventory(employee.getUsername());
+                  addInventory(inventory);
+              }
+          }else {
+              System.out.println("asset doesnt exist");
+          }
+
+      }
+
+        return inventory;
+    }
 }

@@ -20,4 +20,5 @@ public interface InventoryRepository extends MongoRepository<Inventory, String> 
     Optional<Inventory> findInventoryByEmployee(Employee name);
     Optional<Inventory> findInventoryByAssetsContaining(Asset asset);
     Inventory save(Inventory inventory);
+    Inventory deleteInventoryByEmployee_Username(String employee);
 }

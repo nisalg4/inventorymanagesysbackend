@@ -21,4 +21,9 @@ public class Inventory {
         this.assets=assets;
         this.employee=employee;
     }
+
+    public void addAsset(Asset asset){
+        this.assets.add(asset);
+    }
+
 }
