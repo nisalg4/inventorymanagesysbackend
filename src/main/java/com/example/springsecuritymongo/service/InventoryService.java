@@ -82,8 +82,13 @@ public class InventoryService {
     }
 
     public Inventory addAssettoEmployeeinterface(String employeeid,String assetName) {
-      return addAssettoEmployee(employeeService.getEmployeeById(employeeid),assetService.getAssetByName(assetName));
-    }
+        try {
+            if(employeeService.getEmployeeById(employeeid)==null){return new Inventory();}else {
+                return addAssettoEmployee(employeeService.getEmployeeById(employeeid), assetService.getAssetByName(assetName));
+            }
+        }catch (NoSuchElementException e){
+            return new Inventory();        }
+        }
 
     public Inventory addAssettoEmployee(Employee employee,Asset asset) {
 
@@ -100,9 +105,7 @@ public class InventoryService {
           }else {
               System.out.println("asset doesnt exist");
           }
-
       }
-
         return inventory;
     }
 }
