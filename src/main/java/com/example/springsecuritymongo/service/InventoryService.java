@@ -65,7 +65,17 @@ public class InventoryService {
 
     public Inventory addInventory(Inventory inventory) {
 
-        return inventoryRepository.save(inventory);
+        try {
+            if (this.findInventoryByEmployee(inventory.getEmployee().getUsername()).getEmployee().getId().equals(inventory.getEmployee().getId())) {
+                return new Inventory(null,null);
+            } else {
+                return inventoryRepository.save(inventory);
+            }
+
+        }catch(NullPointerException e ){
+            return inventoryRepository.save(inventory);
+        }
+
     }
 
 

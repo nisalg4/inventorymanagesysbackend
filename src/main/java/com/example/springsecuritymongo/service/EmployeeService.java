@@ -29,10 +29,10 @@ public class EmployeeService  {
 
     public Employee addEmployee(Employee employee) {
         try {
-            if (this.getEmployeeById(employee.getId()) == null) {
-                return employeeRepository.save(employee);
+            if (this.getEmployeeById(employee.getId()).getId().equals(employee.getId())) {
+                return new Employee(null,null,null);
             } else {
-                return new Employee();
+                return employeeRepository.save(employee);
             }
 
         }catch(NoSuchElementException e){
