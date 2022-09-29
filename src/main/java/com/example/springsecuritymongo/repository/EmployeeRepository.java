@@ -6,6 +6,7 @@ import com.example.springsecuritymongo.model.Role;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -15,4 +16,12 @@ public interface EmployeeRepository extends MongoRepository<Employee, String> {
 
     Optional<Employee> findEmployeeById(String id);
     Employee save(Employee employee);
+
+    Employee deleteEmployeeById(String id);
+
+
+    @Override
+    List<Employee> findAll();
+
+
 }

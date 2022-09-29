@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 public class WebController {
@@ -52,6 +54,26 @@ public class WebController {
         return new ResponseEntity<>(asset1, HttpStatus.CREATED);
     }
 
+    @GetMapping("/Asset/delete/{ID}")
+    public ResponseEntity<Asset> deleteAsset(@PathVariable String ID) {
+        Asset asset = assetService.deleteAssetById(ID);
+        return new ResponseEntity<>(asset, HttpStatus.OK);
+    }
+
+    @GetMapping("/Asset/getAll")
+    public ResponseEntity<List> getAllAssets() {
+        List<Asset> assets = assetService.getAllAssets();
+        return new ResponseEntity<>(assets, HttpStatus.OK);
+    }
+
+    @PostMapping("/updateAsset")
+    public ResponseEntity<Asset> updateAsset(@RequestBody Asset asset) {
+       Asset asset1=assetService.updateAsset(asset);
+        return new ResponseEntity<>(asset1, HttpStatus.CREATED);
+    }
+
+
+
     @GetMapping("/Employee/{ID}")
     public ResponseEntity<Employee> getEmployeebyID(@PathVariable String ID) {
         Employee employee = employeeService.getEmployeeById(ID);
@@ -63,6 +85,25 @@ public class WebController {
         Employee employee1 = employeeService.addEmployee(employee);
         return new ResponseEntity<>(employee1, HttpStatus.CREATED);
     }
+
+    @GetMapping("/Employee/delete/{ID}")
+    public ResponseEntity<Employee> deleteEmployee(@PathVariable String ID) {
+        Employee employee = employeeService.deleteEmployeeById(ID);
+        return new ResponseEntity<>(employee, HttpStatus.OK);
+    }
+
+    @GetMapping("/Employee/getAll")
+    public ResponseEntity<List> getAllEmployees() {
+        List<Employee> employees = employeeService.getAllEmployees();
+        return new ResponseEntity<>(employees, HttpStatus.OK);
+    }
+
+    @PostMapping("/updateEmployee")
+    public ResponseEntity<Employee> updateEmployee(@RequestBody Employee employee) {
+        Employee employee1=employeeService.updateEmployee(employee);
+        return new ResponseEntity<>(employee1, HttpStatus.CREATED);
+    }
+
 
     @GetMapping("/Manager/{ID}")
     public ResponseEntity<Manager> getManagerbyID(@PathVariable String ID) {

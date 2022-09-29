@@ -45,5 +45,28 @@ public class AssetService  {
             return assetRepo.save(asset);
         }
     }
+
+    public Asset deleteAssetById(String id) {
+        return assetRepo.deleteAssetByAssetId(id);
+    }
+
+    public Asset updateAsset(Asset asset) {
+        try {
+            Asset asset1=this.getAssetById(asset.getAssetId());
+            if (asset1.getAssetId()==null){
+
+            }else {
+                this.deleteAssetById(asset.getAssetId());
+                this.addAsset(asset);
+            }
+        }catch (NoSuchElementException e){
+            this.addAsset(asset);
+        }
+        return asset;
+    }
+
+    public List getAllAssets() {
+        return assetRepo.findAll();
+    }
 }
 

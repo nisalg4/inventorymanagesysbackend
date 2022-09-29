@@ -50,5 +50,28 @@ public class EmployeeService  {
         return getEmployeeByDateOfBirth(dateofbirth);
     }
 
+    public Employee deleteEmployeeById(String id) {
+        return employeeRepository.deleteEmployeeById(id);
+    }
+
+    public Employee updateEmployee(Employee employee) {
+        try {
+            Employee employee1=this.getEmployeeById(employee.getId());
+            if (employee1.getId()==null){
+
+            }else {
+                this.deleteEmployeeById(employee1.getId());
+                this.addEmployee(employee);
+            }
+        }catch (NoSuchElementException e){
+            this.addEmployee(employee);
+        }
+
+        return employee;
+    }
+
+    public List getAllEmployees() {
+        return employeeRepository.findAll();
+    }
 
 }
