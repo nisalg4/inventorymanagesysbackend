@@ -26,4 +26,8 @@ public class Inventory {
         this.assets.add(asset);
     }
 
+    public void deleteAsset(Asset asset){
+        this.assets.remove(asset);
+    }
+
 }

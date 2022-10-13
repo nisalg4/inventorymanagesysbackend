@@ -1,12 +1,16 @@
 package com.example.springsecuritymongo.controller;
 
+import com.example.springsecuritymongo.model.Asset;
+import com.example.springsecuritymongo.model.User;
 import com.example.springsecuritymongo.repository.RoleRepository;
 import com.example.springsecuritymongo.repository.UserRepository;
 import com.example.springsecuritymongo.request.LoginRequest;
 import com.example.springsecuritymongo.response.JwtResponse;
 import com.example.springsecuritymongo.service.UserDetailsImpl;
+import com.example.springsecuritymongo.service.UserService;
 import com.example.springsecuritymongo.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -30,6 +35,8 @@ public class AuthController {
     RoleRepository roleRepository;
     @Autowired
     PasswordEncoder encoder;
+    @Autowired
+    UserService userService;
     @Autowired
     JwtUtils jwtUtils;
     @PostMapping("/login")
@@ -49,6 +56,14 @@ public class AuthController {
                 userDetails.getEmail(),
                 roles));
     }
+
+
+    @PostMapping("/signup")
+    public ResponseEntity<User> addUser(@RequestBody User user) {
+        Optional<User> user1=userService.addUser(user);
+        return new ResponseEntity<>(user1.get(), HttpStatus.CREATED);
+    }
+
 
 //    @PostMapping("/signup")
 //    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {

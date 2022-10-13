@@ -1,6 +1,7 @@
 package com.example.springsecuritymongo.service;
 
 import com.example.springsecuritymongo.model.Asset;
+import com.example.springsecuritymongo.model.AssetAssignmentResponse;
 import com.example.springsecuritymongo.model.Employee;
 import com.example.springsecuritymongo.model.Inventory;
 import com.example.springsecuritymongo.repository.EmployeeRepository;
@@ -13,9 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -28,6 +27,8 @@ public class InventoryService {
 
     @Autowired
     InventoryRepository inventoryRepository;
+
+
 
     public Inventory findInventoryByEmployee(String name) {
 
@@ -78,7 +79,7 @@ public class InventoryService {
     }
 
     public Inventory deleteInventory(String employee) {
-        return inventoryRepository.deleteInventoryByEmployee_Username(employee);
+        return inventoryRepository.deleteInventoryByEmployee_Username(employeeService.getEmployeeByUsername(employee).getUsername());
     }
 
     public Inventory addAssettoEmployeeinterface(String employeeid,String assetName) {
@@ -93,19 +94,59 @@ public class InventoryService {
     public Inventory addAssettoEmployee(Employee employee,Asset asset) {
 
       Inventory inventory=this.findInventoryByEmployee(employee.getUsername());
+      try{
       if(inventory.getEmployee().getId()==null){
-          addInventory(new Inventory((List) asset,employee));
+
       }else {
           if(assetService.getAssetById(asset.getAssetId()).getAssetId().equals(asset.getAssetId())){
+
               if(this.findInventorybyAsset(asset.getName()).getEmployee()==null) {
-                  inventory.addAsset(asset);
-                  deleteInventory(employee.getUsername());
-                  addInventory(inventory);
+                  try {
+                      inventory.addAsset(asset);
+                      deleteInventory(employee.getUsername());
+                      addInventory(inventory);
+                  }catch (NoSuchElementException e){
+                      addInventory(inventory);
+                  }
               }
           }else {
               System.out.println("asset doesnt exist");
           }
       }
+      }catch (NullPointerException e){
+
+
+          Inventory inventory2=new Inventory(new ArrayList<>(),employee);
+          try {
+              if(findInventorybyAsset(asset.getName())==null){
+
+              }
+          }catch (NullPointerException x){
+              inventory2.addAsset(asset);
+             // addInventory(inventory2);
+          }
+          addInventory(inventory2);
+
+      }
         return inventory;
     }
+
+    public List getAllAssetAssignments() {
+        return inventoryRepository.findAll();
+    }
+
+    public List getAllAssetAssignmentsProcessing() {
+        List<Inventory> inventories=getAllAssetAssignments();
+        List<AssetAssignmentResponse> assetAssignmentResponses = new ArrayList<>();
+        for (Inventory inventory:inventories) {
+String assetowner=inventory.getEmployee().getUsername();
+        for(Asset asset:inventory.getAssets()){
+            String assetname=asset.getName();
+            assetAssignmentResponses.add(new AssetAssignmentResponse(assetowner,assetname));
+        }
+        }
+        return assetAssignmentResponses;
+    }
+
+
 }

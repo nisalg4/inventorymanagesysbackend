@@ -1,9 +1,6 @@
 package com.example.springsecuritymongo.controller;
 
-import com.example.springsecuritymongo.model.Asset;
-import com.example.springsecuritymongo.model.Employee;
-import com.example.springsecuritymongo.model.Inventory;
-import com.example.springsecuritymongo.model.Manager;
+import com.example.springsecuritymongo.model.*;
 import com.example.springsecuritymongo.service.AssetService;
 import com.example.springsecuritymongo.service.EmployeeService;
 import com.example.springsecuritymongo.service.InventoryService;
@@ -13,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -57,6 +55,7 @@ public class WebController {
     @GetMapping("/Asset/delete/{ID}")
     public ResponseEntity<Asset> deleteAsset(@PathVariable String ID) {
         Asset asset = assetService.deleteAssetById(ID);
+
         return new ResponseEntity<>(asset, HttpStatus.OK);
     }
 
@@ -83,12 +82,14 @@ public class WebController {
     @PostMapping("/addEmployee")
     public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) {
         Employee employee1 = employeeService.addEmployee(employee);
+        inventoryService.addInventory(new Inventory(new ArrayList<Asset>(),employee1));
         return new ResponseEntity<>(employee1, HttpStatus.CREATED);
     }
 
     @GetMapping("/Employee/delete/{ID}")
     public ResponseEntity<Employee> deleteEmployee(@PathVariable String ID) {
         Employee employee = employeeService.deleteEmployeeById(ID);
+        inventoryService.deleteInventory(ID);
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
@@ -117,33 +118,45 @@ public class WebController {
         return new ResponseEntity<>(manager1, HttpStatus.CREATED);
     }
 
-    @GetMapping("/Inventory/employeeName/{ID}")
-    public ResponseEntity<Inventory> getInventoryByName(@PathVariable String ID) {
+    @GetMapping("/AssetAssignment/employeeName/{ID}")
+    public ResponseEntity<List> getAssetAssignmentByName(@PathVariable String ID) {
         Inventory inventory = inventoryService.findInventoryByEmployee(ID);
-        return new ResponseEntity<>(inventory, HttpStatus.OK);
+        return new ResponseEntity<>(inventory.getAssets(), HttpStatus.OK);
     }
 
-    @GetMapping("/Inventory/asset/{ID}")
-    public ResponseEntity<Inventory> getInventorybyAsset(@PathVariable String ID) {
+    @GetMapping("/AssetAssignment/asset/{ID}")
+    public ResponseEntity<Inventory> getAssetAssignmentbyAsset(@PathVariable String ID) {
         Inventory inventory = inventoryService.findInventorybyAsset(ID);
         return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
 
-    @PostMapping("/addInventory")
-    public ResponseEntity<Inventory> addInventory(@RequestBody Inventory inventory) {
+    @PostMapping("/addAssetAssignment")
+    public ResponseEntity<Inventory> addAssetAssignment(@RequestBody Inventory inventory) {
         Inventory inventory1 = inventoryService.addInventory(inventory);
         return new ResponseEntity<>(inventory1, HttpStatus.CREATED);
     }
 
-    @GetMapping("/Inventory/delete/{ID}")
-    public ResponseEntity<Inventory> deleteInventorybyEmployee(@PathVariable String ID) {
+    @GetMapping("/AssetAssignment/delete/{ID}")
+    public ResponseEntity<Inventory> deleteAssetAssignmentbyEmployee(@PathVariable String ID) {
         Inventory inventory = inventoryService.deleteInventory(ID);
         return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
-    @PostMapping("/updateInventory")
-    public ResponseEntity<Inventory> updateInventory(@RequestBody Inventory inventory) {
+    @PostMapping("/addAssetAssignmentforemployee")
+    public ResponseEntity<Inventory> addAssetAssignmentforemployee(@RequestBody AssetAssignmentResponse assetAssignmentResponse) {
+        Inventory inventory=new Inventory(new ArrayList<>(),employeeService.getEmployeeByUsername(assetAssignmentResponse.getEmployee()));
+        inventory.addAsset(assetService.getAssetByName(assetAssignmentResponse.getAsset()));
         Inventory inventory1 = inventoryService.addAssettoEmployeeinterface(inventory.getEmployee().getId(),inventory.getAssets().get(0).getName());
         return new ResponseEntity<>(inventory1, HttpStatus.CREATED);
     }
+
+
+    @GetMapping("/AssetAssignment/getAll")
+    public ResponseEntity<List> getAllAssetAssignments() {
+        //List<Inventory> inventories = inventoryService.getAllAssetAssignments();
+
+        List<AssetAssignmentResponse> assetAssignmentResponses=inventoryService.getAllAssetAssignmentsProcessing();
+        return new ResponseEntity<>(assetAssignmentResponses, HttpStatus.OK);
+    }
+
 
 }

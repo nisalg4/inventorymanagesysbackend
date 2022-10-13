@@ -2,6 +2,7 @@ package com.example.springsecuritymongo.service;
 
 import com.example.springsecuritymongo.model.Asset;
 import com.example.springsecuritymongo.model.Employee;
+import com.example.springsecuritymongo.model.Inventory;
 import com.example.springsecuritymongo.repository.AssetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -47,6 +48,9 @@ public class AssetService  {
     }
 
     public Asset deleteAssetById(String id) {
+InventoryService inventoryService=new InventoryService();
+        Inventory inventory=inventoryService.findInventorybyAsset(this.getAssetById(id).getName());
+        inventory.deleteAsset(this.getAssetById(id));
         return assetRepo.deleteAssetByAssetId(id);
     }
 
