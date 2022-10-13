@@ -24,4 +24,5 @@ public interface InventoryRepository extends MongoRepository<Inventory, String> 
 
     Inventory save(Inventory inventory);
     Inventory deleteInventoryByEmployee_Username(String employee);
+
 }

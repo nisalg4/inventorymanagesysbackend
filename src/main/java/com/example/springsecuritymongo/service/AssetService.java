@@ -5,6 +5,7 @@ import com.example.springsecuritymongo.model.Employee;
 import com.example.springsecuritymongo.model.Inventory;
 import com.example.springsecuritymongo.repository.AssetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,10 @@ public class AssetService  {
     @Autowired
     AssetRepository assetRepo;
 
+    @Lazy
+    @Autowired
+    InventoryService inventoryService;
+
 
     public Asset getAssetById(String id) {
         return assetRepo.findByAssetId(id).get();
@@ -31,7 +36,7 @@ public class AssetService  {
 
 
     public Asset getAssetByName(String name) {
-        return assetRepo.findByName(name);
+        return assetRepo.findByName(name).get();
     }
 
     public Asset addAsset(Asset asset) {
@@ -48,10 +53,20 @@ public class AssetService  {
     }
 
     public Asset deleteAssetById(String id) {
-InventoryService inventoryService=new InventoryService();
-        Inventory inventory=inventoryService.findInventorybyAsset(this.getAssetById(id).getName());
-        inventory.deleteAsset(this.getAssetById(id));
-        return assetRepo.deleteAssetByAssetId(id);
+        Asset asset=new Asset();
+        try {
+            Inventory inventory=inventoryService.findInventorybyAsset(this.getAssetById(id).getName());
+            inventoryService.deleteInventory(inventory.getEmployee().getUsername());
+            inventory.deleteAsset(this.getAssetById(id));
+            inventoryService.addInventory(inventory);
+            asset=assetRepo.deleteAssetByAssetId(id);
+
+        }catch (NullPointerException e){
+
+            }
+
+
+        return asset;
     }
 
     public Asset updateAsset(Asset asset) {

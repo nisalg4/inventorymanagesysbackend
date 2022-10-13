@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,9 +16,9 @@ import java.util.Set;
 @NoArgsConstructor
 public class Inventory {
     private Employee employee;
-    private List<Asset> assets ;
+    private ArrayList<Asset> assets ;
 
-    public Inventory(List assets,Employee employee){
+    public Inventory(ArrayList assets,Employee employee){
         this.assets=assets;
         this.employee=employee;
     }
@@ -27,7 +28,15 @@ public class Inventory {
     }
 
     public void deleteAsset(Asset asset){
-        this.assets.remove(asset);
+        ArrayList<Asset> newAssets = new ArrayList<>();
+        for (Asset element:
+             assets) {
+            if (!element.getAssetId().equals(asset.getAssetId())){
+                newAssets.add(element);
+            }
+        }
+
+        this.assets=newAssets;
     }
 
 }

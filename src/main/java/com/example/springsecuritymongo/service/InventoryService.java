@@ -48,6 +48,7 @@ public class InventoryService {
     }
 
     public Inventory findInventorybyAsset(String name) {
+
         Asset asset=assetService.getAssetByName(name);
         try {
             Inventory inventory=inventoryRepository.findInventoryByAssetsContaining(asset).get();
@@ -59,6 +60,9 @@ public class InventoryService {
             }
 
         }catch (NoSuchElementException e){
+            return new Inventory();
+        }
+        catch (NullPointerException x){
             return new Inventory();
         }
 
