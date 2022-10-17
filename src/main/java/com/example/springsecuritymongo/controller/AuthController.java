@@ -64,6 +64,12 @@ public class AuthController {
         return new ResponseEntity<>(user1.get(), HttpStatus.CREATED);
     }
 
+    @PostMapping("/updateUser")
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        //Optional<User> oldUser=userRepository.findUserById(user.getId());
+        Optional<User> user1=userService.updateUser(user);
+        return new ResponseEntity<>(user1.get(), HttpStatus.CREATED);
+    }
 
 //    @PostMapping("/signup")
 //    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {

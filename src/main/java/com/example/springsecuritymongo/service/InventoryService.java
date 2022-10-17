@@ -1,21 +1,14 @@
 package com.example.springsecuritymongo.service;
 
 import com.example.springsecuritymongo.model.Asset;
-import com.example.springsecuritymongo.model.AssetAssignmentResponse;
+import com.example.springsecuritymongo.response.AssetAssignmentResponse;
 import com.example.springsecuritymongo.model.Employee;
 import com.example.springsecuritymongo.model.Inventory;
-import com.example.springsecuritymongo.repository.EmployeeRepository;
 import com.example.springsecuritymongo.repository.InventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Function;
 
 @Service
 public class InventoryService {
@@ -86,6 +79,24 @@ public class InventoryService {
         return inventoryRepository.deleteInventoryByEmployee_Username(employeeService.getEmployeeByUsername(employee).getUsername());
     }
 
+
+    public Inventory deleteInventoryAsset(AssetAssignmentResponse assetAssignmentResponse){
+        Inventory inventory= findInventoryByEmployee(assetAssignmentResponse.getEmployee());
+        ArrayList<Asset> assets = inventory.getAssets();
+
+        ArrayList<Asset> newAssets = new ArrayList<>();
+        for (Asset element:
+                assets) {
+            if (!element.getName().equals(assetService.getAssetByName(assetAssignmentResponse.getAsset()).getName())){
+                newAssets.add(element);
+            }
+        }
+        this.deleteInventory(inventory.getEmployee().getUsername());
+Inventory inventory1=new Inventory(newAssets,inventory.getEmployee());
+this.addInventory(inventory1);
+        return inventory1;
+    }
+
     public Inventory addAssettoEmployeeinterface(String employeeid,String assetName) {
         try {
             if(employeeService.getEmployeeById(employeeid)==null){return new Inventory();}else {
@@ -152,5 +163,42 @@ String assetowner=inventory.getEmployee().getUsername();
         return assetAssignmentResponses;
     }
 
+    public Inventory updateInventoryEmployee(Employee employee,Employee oldEmployee){
+        Inventory oldinventory= findInventoryByEmployee(oldEmployee.getUsername());
+        Inventory inventory1=new Inventory(oldinventory.getAssets(),employee);
 
+        this.deleteInventory(oldinventory.getEmployee().getUsername());
+        this.addInventory(inventory1);
+        return inventory1;
+    }
+
+    public Inventory updateInventoryAsset(Asset asset,Asset oldAsset){
+        try{
+            Inventory oldinventory= findInventorybyAsset(oldAsset.getName());
+
+            ArrayList<Asset> assets = oldinventory.getAssets();
+
+            ArrayList<Asset> newAssets = new ArrayList<>();
+            for (Asset element:
+                    assets) {
+                if (!element.getAssetId().equals(asset.getAssetId())){
+                    newAssets.add(element);
+                }
+            }
+            newAssets.add(asset);
+
+
+            Inventory inventory1=new Inventory(newAssets,oldinventory.getEmployee());
+
+            this.deleteInventory(oldinventory.getEmployee().getUsername());
+            this.addInventory(inventory1);
+            return inventory1;
+        }catch (NoSuchElementException e){
+
+        }catch (NullPointerException x){
+
+        }
+        return null;
+
+    }
 }

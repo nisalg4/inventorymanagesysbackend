@@ -62,6 +62,7 @@ public class AssetService  {
             asset=assetRepo.deleteAssetByAssetId(id);
 
         }catch (NullPointerException e){
+            asset=assetRepo.deleteAssetByAssetId(id);
 
             }
 

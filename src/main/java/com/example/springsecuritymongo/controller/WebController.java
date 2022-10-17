@@ -1,10 +1,8 @@
 package com.example.springsecuritymongo.controller;
 
 import com.example.springsecuritymongo.model.*;
-import com.example.springsecuritymongo.service.AssetService;
-import com.example.springsecuritymongo.service.EmployeeService;
-import com.example.springsecuritymongo.service.InventoryService;
-import com.example.springsecuritymongo.service.ManagerService;
+import com.example.springsecuritymongo.response.AssetAssignmentResponse;
+import com.example.springsecuritymongo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +22,9 @@ public class WebController {
     ManagerService managerService;
     @Autowired
     InventoryService inventoryService;
+
+    @Autowired
+    UserService userService;
 
     @GetMapping("/home")
     public String getHome() {
@@ -55,7 +56,6 @@ public class WebController {
     @GetMapping("/Asset/delete/{ID}")
     public ResponseEntity<Asset> deleteAsset(@PathVariable String ID) {
         Asset asset = assetService.deleteAssetById(ID);
-
         return new ResponseEntity<>(asset, HttpStatus.OK);
     }
 
@@ -67,7 +67,10 @@ public class WebController {
 
     @PostMapping("/updateAsset")
     public ResponseEntity<Asset> updateAsset(@RequestBody Asset asset) {
+        Asset oldAsset=assetService.getAssetById(asset.getAssetId());
+        inventoryService.updateInventoryAsset(asset,oldAsset);
        Asset asset1=assetService.updateAsset(asset);
+
         return new ResponseEntity<>(asset1, HttpStatus.CREATED);
     }
 
@@ -86,10 +89,13 @@ public class WebController {
         return new ResponseEntity<>(employee1, HttpStatus.CREATED);
     }
 
+
     @GetMapping("/Employee/delete/{ID}")
     public ResponseEntity<Employee> deleteEmployee(@PathVariable String ID) {
+        inventoryService.deleteInventory(employeeService.getEmployeeById(ID).getUsername());
+        userService.deleteUser(employeeService.getEmployeeById(ID));
         Employee employee = employeeService.deleteEmployeeById(ID);
-        inventoryService.deleteInventory(ID);
+
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
@@ -101,6 +107,8 @@ public class WebController {
 
     @PostMapping("/updateEmployee")
     public ResponseEntity<Employee> updateEmployee(@RequestBody Employee employee) {
+        Employee oldEmployee=employeeService.getEmployeeById(employee.getId());
+        inventoryService.updateInventoryEmployee(employee,oldEmployee);
         Employee employee1=employeeService.updateEmployee(employee);
         return new ResponseEntity<>(employee1, HttpStatus.CREATED);
     }
@@ -141,6 +149,13 @@ public class WebController {
         Inventory inventory = inventoryService.deleteInventory(ID);
         return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
+
+    @PostMapping("/deleteAssetAssignmentAsset")
+    public ResponseEntity<Inventory> deleteAssetAssignmentAsset(@RequestBody AssetAssignmentResponse assetAssignmentResponse) {
+        Inventory inventory1 = inventoryService.deleteInventoryAsset(assetAssignmentResponse);
+        return new ResponseEntity<>(inventory1, HttpStatus.CREATED);
+    }
+
     @PostMapping("/addAssetAssignmentforemployee")
     public ResponseEntity<Inventory> addAssetAssignmentforemployee(@RequestBody AssetAssignmentResponse assetAssignmentResponse) {
         Inventory inventory=new Inventory(new ArrayList<>(),employeeService.getEmployeeByUsername(assetAssignmentResponse.getEmployee()));

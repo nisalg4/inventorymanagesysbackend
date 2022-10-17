@@ -1,4 +1,4 @@
-package com.example.springsecuritymongo.model;
+package com.example.springsecuritymongo.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
