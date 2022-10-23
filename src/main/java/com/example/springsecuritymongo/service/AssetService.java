@@ -31,25 +31,25 @@ public class AssetService  {
 
 
     public Asset getAssetById(String id) {
-        return assetRepo.findByAssetId(id).get();
+        return assetRepo.findAssetByAssetId(id).get();
     }
 
 
     public Asset getAssetByName(String name) {
-        return assetRepo.findByName(name).get();
+        if(assetRepo.existsByName(name)) {
+            return assetRepo.findAssetByName(name).get();
+        }else return new Asset();
     }
 
     public Asset addAsset(Asset asset) {
-        try {
-            if (this.getAssetById(asset.getAssetId()).getAssetId().equals(asset.getAssetId())) {
-                return new Asset(null,null);
-            } else {
+
+            if(!assetRepo.existsByName(asset.getName())){
                 return assetRepo.save(asset);
+            }else {
+                return new Asset();
+
             }
 
-        }catch(NoSuchElementException e){
-            return assetRepo.save(asset);
-        }
     }
 
     public Asset deleteAssetById(String id) {

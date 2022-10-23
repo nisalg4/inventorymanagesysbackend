@@ -9,8 +9,10 @@ import java.util.Optional;
 
 
 public interface AssetRepository extends MongoRepository<Asset, String> {
-    Optional<Asset> findByAssetId(String assetId);
-    Optional<Asset> findByName(String name);
+    Optional<Asset> findAssetByAssetId(String assetId);
+    Optional<Asset> findAssetByName(String name);
+
+    Boolean existsByName(String name);
     Asset save(Asset asset);
     Asset deleteAssetByAssetId(String id);
 

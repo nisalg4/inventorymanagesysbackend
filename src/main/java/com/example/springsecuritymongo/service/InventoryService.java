@@ -43,23 +43,16 @@ public class InventoryService {
     public Inventory findInventorybyAsset(String name) {
 
         Asset asset=assetService.getAssetByName(name);
-        try {
+        try{
             Inventory inventory=inventoryRepository.findInventoryByAssetsContaining(asset).get();
-            System.out.println("aaa"+inventory.getAssets());
-            if (asset==null){
-                return new Inventory();
-            }else{
-                return inventoryRepository.findInventoryByAssetsContaining(asset).get();
-            }
-
+            return inventory;
         }catch (NoSuchElementException e){
             return new Inventory();
         }
-        catch (NullPointerException x){
-            return new Inventory();
-        }
 
-    }
+
+}
+
 
     public Inventory addInventory(Inventory inventory) {
 
@@ -92,8 +85,8 @@ public class InventoryService {
             }
         }
         this.deleteInventory(inventory.getEmployee().getUsername());
-Inventory inventory1=new Inventory(newAssets,inventory.getEmployee());
-this.addInventory(inventory1);
+        Inventory inventory1=new Inventory(newAssets,inventory.getEmployee());
+        this.addInventory(inventory1);
         return inventory1;
     }
 

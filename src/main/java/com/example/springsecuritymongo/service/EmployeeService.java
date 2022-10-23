@@ -23,26 +23,24 @@ import java.util.function.Function;
 public class EmployeeService  {
     @Autowired
     EmployeeRepository employeeRepository;
+
+    @Autowired
+    UserService userService;
     public Employee getEmployeeById(String id) {
-        return employeeRepository.findEmployeeById(id).get();
+        return employeeRepository.findEmployeeByid(id).get();
     }
 
     public Employee addEmployee(Employee employee) {
-        try {
-            if (this.getEmployeeById(employee.getId()).getId().equals(employee.getId())) {
-                return new Employee(null,null,null);
-            } else {
-                return employeeRepository.save(employee);
-            }
 
-        }catch(NoSuchElementException e){
+        if(!employeeRepository.existsByUsername(employee.getUsername())){
             return employeeRepository.save(employee);
         }
+        else return new Employee();
 
     }
 
     public Employee getEmployeeByUsername(String name) {
-        return employeeRepository.findEmployeeByUsername(name);
+        return employeeRepository.findEmployeeByusername(name);
     }
 
 
@@ -60,6 +58,7 @@ public class EmployeeService  {
             if (employee1.getId()==null){
 
             }else {
+                userService.updateUser(employee1.getUsername(),employee.getUsername());
                 this.deleteEmployeeById(employee1.getId());
                 this.addEmployee(employee);
             }

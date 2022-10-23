@@ -11,14 +11,15 @@ import java.util.Optional;
 
 
 public interface EmployeeRepository extends MongoRepository<Employee, String> {
-    Employee findEmployeeByUsername(String name);
+    Employee findEmployeeByusername(String username);
     Employee getEmployeeByDateOfBirth(String dateofbirth);
 
-    Optional<Employee> findEmployeeById(String id);
+    Optional<Employee> findEmployeeByid(String id);
     Employee save(Employee employee);
 
     Employee deleteEmployeeById(String id);
 
+    Boolean existsByUsername(String username);
 
     @Override
     List<Employee> findAll();

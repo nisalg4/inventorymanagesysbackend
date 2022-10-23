@@ -68,6 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/signup").hasAnyAuthority("admin")
                 .antMatchers("/AssetAssignment/getAll").hasAnyAuthority("admin")
                 .antMatchers("/deleteAssetAssignmentAsset").hasAnyAuthority("admin")
+                .antMatchers("/updateUser").hasAnyAuthority("admin")
                 .anyRequest().authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }

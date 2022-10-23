@@ -31,17 +31,19 @@ public class UserService {
 
         Optional<User> user=userRepository.findUserByUsername(employee.getUsername());
        if(userRepository.existsByUsername(user.get().getUsername())){
-           userRepository.deleteUserById(user.get().getId());
+           userRepository.deleteUserByUsername(user.get().getUsername());
        }
 
     }
 
-    public Optional<User> updateUser(User user){
+    public User updateUser(String oldusername,String newusername){
+if (userRepository.existsByUsername(oldusername)){
+    Optional<User> olduser=userRepository.findUserByUsername(oldusername);
+    User newuser=new User(newusername,"",olduser.get().getPassword());
+    userRepository.deleteUserByUsername(oldusername);
+    this.addUser(newuser);
+}
 
-            Optional<User> user1=userRepository.findUserById(user.getId());
-            userRepository.deleteUserById(user1.get().getId());
-            this.addUser(user);
-
-        return Optional.of(user);
+        return new User();
     }
 }

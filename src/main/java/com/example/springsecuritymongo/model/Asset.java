@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -16,7 +17,9 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class Asset {
+    @Id
     private String assetId;
+    @Indexed(unique = true)
     private String name;
 
 
